@@ -6,6 +6,7 @@
 import React, {Component} from 'react';
 import {Text, View, Navigator, AsyncStorage, TouchableOpacity, ListView} from 'react-native';
 import {styles} from './components/styles';
+import MapView from 'react-native-maps';
 
 const API_URL = 'http://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&facet=banking&facet=bonus&facet=status&facet=contract_name';
 

@@ -9,6 +9,7 @@
   "dependencies": {
     "react": "15.3.2",
     "react-native": "0.37.0",
+    "react-native-maps": "^0.11.0",
     "redux": "^3.6.0",
     "redux-actions": "0.11.0",
     "redux-thunk": "2.1.0"
