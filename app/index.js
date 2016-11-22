@@ -21,9 +21,10 @@ export default class ReactVelib extends Component {
     }
 
     render() {
+        this.geolocAction();
         return (
             <View style={styles.container} refreshing>
-                <ListView dataSource={this.state.dataSource} renderRow={ReactVelib.renderRow} enableEmptySections/>
+                <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
             </View>
         );
     }
@@ -37,18 +38,51 @@ export default class ReactVelib extends Component {
         });
     }
 
-    static renderRow(rowData) {
+    renderRow(rowData) {
         const name = (rowData.fields.name).split(" - ");
         const totalBike = rowData.fields.available_bike_stands;
         const bikes = rowData.fields.available_bikes;
+        const pos = this.state.position;
+        const velibPos = rowData.fields.position;
+        const distance = this.getDistanceFromLatLonInKm(pos.lattitude, pos.longitude, velibPos[0], velibPos[1]);
         return (
             <View style={styles.row}>
                 <Text>{name[name.length - 1]}</Text>
-                <Text>100m</Text>
+                <Text>{Math.round(distance)}m</Text>
                 <Text>{`${bikes}/${totalBike}`}</Text>
             </View>
         );
     }
+
+    getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = this.deg2rad(lat2 - lat1);  // deg2rad below
+        var dLon = this.deg2rad(lon2 - lon1);
+        var a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+            ;
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c; // Distance in km
+        return d;
+    }
+
+    deg2rad(deg) {
+        return deg * (Math.PI / 180)
+    }
+
+    geolocAction() {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                this.setState({position: {lattitude: position.coords.latitude, longitude: position.coords.longitude}});
+                this.setState({posString: JSON.stringify(this.state.position, undefined, 2)});
+            },
+            (error) => alert(JSON.stringify(error)),
+            {enableHighAccuracy: true, timeout: 2000, maximumAge: 1000}
+        );
+    }
+
 }
 
 
