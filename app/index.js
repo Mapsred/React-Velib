@@ -4,13 +4,13 @@
 
 //noinspection JSUnresolvedVariable
 import React, {Component} from 'react';
-import {Text, View, AsyncStorage, ListView} from 'react-native';
+import {Text, View, AsyncStorage, ListView, Image} from 'react-native';
 import {styles, mapsStyle} from './components/styles';
 import MapView from 'react-native-maps';
 
 
 const API_URL = 'http://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&facet=banking&facet=bonus&facet=status&facet=contract_name';
-
+const CDN_URL = "http://cdn.mindgame.ovh/navigo/medias/";
 
 export default class ReactVelib extends Component {
 
@@ -21,16 +21,18 @@ export default class ReactVelib extends Component {
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {data: {records: {}}, requestFrom: '', dataSource: ds.cloneWithRows([]), markers: []};
         this.getData();
+        this.geolocAction();
     }
 
     render() {
-        this.geolocAction();
         return (
-            <View style={styles.container} refreshing>
+            <View style={mapsStyle.container} refreshing>
                 <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
                 <MapView style={mapsStyle.map} initialRegion={this.state.region}>
-                    {this.state.markers.map(marker => (<MapView.Marker coordinate={marker.coordinate}/>))}
+                    {this.state.markers.map(marker =>
+                    (<MapView.Marker coordinate={marker.coordinate} title={marker.title} image={marker.image} description={marker.description}/>))}
                 </MapView>
+
 
             </View>
         );
@@ -97,7 +99,13 @@ export default class ReactVelib extends Component {
     }
 
     incrementMarkups(fields, velibPos) {
-        this.state.markers.push({coordinate: {latitude: velibPos[0], longitude: velibPos[1]}, title: fields.name, description: fields.address});
+        const description = fields.available_bikes + "/" + fields.available_bike_stands;
+        this.state.markers.push({
+            coordinate: {latitude: velibPos[0], longitude: velibPos[1]},
+            title: fields.address,
+            description: description,
+            image : require('../assets/images/pink_mark.png')
+        });
     }
 }
 
