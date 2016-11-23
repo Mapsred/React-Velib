@@ -7,10 +7,10 @@ import React, {Component} from 'react';
 import {Text, View, AsyncStorage, ListView, Image} from 'react-native';
 import {styles, mapsStyle} from './components/styles';
 import MapView from 'react-native-maps';
+import {VelibStation} from './components/VelibStation';
 
 
 const API_URL = 'http://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&facet=banking&facet=bonus&facet=status&facet=contract_name';
-const CDN_URL = "http://cdn.mindgame.ovh/navigo/medias/";
 
 export default class ReactVelib extends Component {
 
@@ -27,13 +27,12 @@ export default class ReactVelib extends Component {
     render() {
         return (
             <View style={mapsStyle.container} refreshing>
-                <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
                 <MapView style={mapsStyle.map} initialRegion={this.state.region}>
                     {this.state.markers.map(marker =>
-                    (<MapView.Marker coordinate={marker.coordinate} title={marker.title} image={marker.image} description={marker.description}/>))}
+                        (<MapView.Marker coordinate={marker.coordinate} title={marker.title} image={marker.image}
+                                         description={marker.description}/>))}
                 </MapView>
-
-
+                <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
             </View>
         );
     }
@@ -48,19 +47,13 @@ export default class ReactVelib extends Component {
     renderRow(rowData) {
         const fields = rowData.fields;
         const name = (fields.name).split(" - ");
-        const totalBike = fields.available_bike_stands;
-        const bikes = fields.available_bikes;
+        const bikes = {remaining: fields.available_bikes, total: fields.available_bike_stands};
         const pos = this.state.position;
         const velibPos = fields.position;
         const distance = this.getDistanceFromLatLonInKm(pos.latitude, pos.longitude, velibPos[0], velibPos[1]);
         this.incrementMarkups(fields, velibPos);
-        return (
-            <View style={styles.row}>
-                <Text>{name[name.length - 1]}</Text>
-                <Text>{Math.round(distance)}m</Text>
-                <Text>{`${bikes}/${totalBike}`}</Text>
-            </View>
-        );
+
+        return (<VelibStation title={name[name.length - 1]} distance={Math.round(distance)} bikes={bikes}/>);
     }
 
     getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
@@ -104,7 +97,7 @@ export default class ReactVelib extends Component {
             coordinate: {latitude: velibPos[0], longitude: velibPos[1]},
             title: fields.address,
             description: description,
-            image : require('../assets/images/pink_mark.png')
+            image: require('../assets/images/pink_mark.png')
         });
     }
 }
