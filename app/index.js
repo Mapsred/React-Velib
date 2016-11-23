@@ -27,7 +27,8 @@ export default class ReactVelib extends Component {
         this.geolocAction();
         return (
             <View style={styles.container} refreshing>
-                <MapView initialRegion={{latitude: 37.78825,longitude: -122.4324,latitudeDelta: 0.0922,longitudeDelta: 0.0421}}/>
+                <MapView
+                    initialRegion={{latitude: 37.78825,longitude: -122.4324,latitudeDelta: 0.0922,longitudeDelta: 0.0421}}/>
                 <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
             </View>
         );
@@ -81,11 +82,7 @@ export default class ReactVelib extends Component {
             (position) => {
                 this.setState({position: {lattitude: position.coords.latitude, longitude: position.coords.longitude}});
                 this.setState({posString: JSON.stringify(this.state.position, undefined, 2)});
-
-            },
-            (error) => alert(JSON.stringify(error)),
-            // {enableHighAccuracy: false, timeout: 8000, maximumAge: 1000}
-
+            }, (error) => alert(JSON.stringify(error))
         )
     }
 
