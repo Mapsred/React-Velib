@@ -4,27 +4,30 @@
 
 //noinspection JSUnresolvedVariable
 import React, {Component} from 'react';
-import {Text, View, Navigator, AsyncStorage, TouchableOpacity, ListView} from 'react-native';
+import {Text, View, AsyncStorage, ListView} from 'react-native';
 import {styles} from './components/styles';
 import MapView from 'react-native-maps';
+
 
 const API_URL = 'http://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&facet=banking&facet=bonus&facet=status&facet=contract_name';
 
 
 export default class ReactVelib extends Component {
+
     constructor() {
         super();
 
         this.apiClient = new ApiClient();
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {data: {records: {}}, requestFrom: '', dataSource: ds.cloneWithRows([])};
-        this.getData()
+        this.getData();
     }
 
     render() {
         this.geolocAction();
         return (
             <View style={styles.container} refreshing>
+                <MapView initialRegion={{latitude: 37.78825,longitude: -122.4324,latitudeDelta: 0.0922,longitudeDelta: 0.0421}}/>
                 <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
             </View>
         );
@@ -78,10 +81,12 @@ export default class ReactVelib extends Component {
             (position) => {
                 this.setState({position: {lattitude: position.coords.latitude, longitude: position.coords.longitude}});
                 this.setState({posString: JSON.stringify(this.state.position, undefined, 2)});
+
             },
             (error) => alert(JSON.stringify(error)),
-            {enableHighAccuracy: true, timeout: 2000, maximumAge: 1000}
-        );
+            // {enableHighAccuracy: false, timeout: 8000, maximumAge: 1000}
+
+        )
     }
 
 }
