@@ -23,3 +23,18 @@ export const styles = StyleSheet.create({
         marginBottom: 5,
     },
 });
+
+
+export const mapsStyle = {
+    container: {
+        ...StyleSheet.absoluteFillObject,
+        height: 400,
+        width: 400,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+
+};

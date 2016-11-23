@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <permission android:name="com.maps.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.maps.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -18,7 +23,7 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAzUzTe8X5bMnEB5F1lDk8GkVy3BjbczxA"/>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyD2HJnOyl1SRvpaKUcaBKaFDrHNg2-oqR8"/>
         <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

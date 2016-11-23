@@ -5,7 +5,7 @@
 //noinspection JSUnresolvedVariable
 import React, {Component} from 'react';
 import {Text, View, AsyncStorage, ListView} from 'react-native';
-import {styles} from './components/styles';
+import {styles, mapsStyle} from './components/styles';
 import MapView from 'react-native-maps';
 
 
@@ -19,7 +19,7 @@ export default class ReactVelib extends Component {
 
         this.apiClient = new ApiClient();
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.state = {data: {records: {}}, requestFrom: '', dataSource: ds.cloneWithRows([])};
+        this.state = {data: {records: {}}, requestFrom: '', dataSource: ds.cloneWithRows([]), markers: []};
         this.getData();
     }
 
@@ -27,9 +27,11 @@ export default class ReactVelib extends Component {
         this.geolocAction();
         return (
             <View style={styles.container} refreshing>
-                <MapView
-                    initialRegion={{latitude: 37.78825,longitude: -122.4324,latitudeDelta: 0.0922,longitudeDelta: 0.0421}}/>
                 <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
+                <MapView style={mapsStyle.map} initialRegion={this.state.region}>
+                    {this.state.markers.map(marker => (<MapView.Marker coordinate={marker.coordinate}/>))}
+                </MapView>
+
             </View>
         );
     }
@@ -37,19 +39,19 @@ export default class ReactVelib extends Component {
     getData() {
         this.apiClient.get(API_URL).then((data) => {
             this.setState({data: data.data, requestFrom: data.from});
-            this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(this.state.data.records)
-            });
+            this.setState({dataSource: this.state.dataSource.cloneWithRows(this.state.data.records)});
         });
     }
 
     renderRow(rowData) {
-        const name = (rowData.fields.name).split(" - ");
-        const totalBike = rowData.fields.available_bike_stands;
-        const bikes = rowData.fields.available_bikes;
+        const fields = rowData.fields;
+        const name = (fields.name).split(" - ");
+        const totalBike = fields.available_bike_stands;
+        const bikes = fields.available_bikes;
         const pos = this.state.position;
-        const velibPos = rowData.fields.position;
-        const distance = this.getDistanceFromLatLonInKm(pos.lattitude, pos.longitude, velibPos[0], velibPos[1]);
+        const velibPos = fields.position;
+        const distance = this.getDistanceFromLatLonInKm(pos.latitude, pos.longitude, velibPos[0], velibPos[1]);
+        this.incrementMarkups(fields, velibPos);
         return (
             <View style={styles.row}>
                 <Text>{name[name.length - 1]}</Text>
@@ -80,12 +82,23 @@ export default class ReactVelib extends Component {
     geolocAction() {
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                this.setState({position: {lattitude: position.coords.latitude, longitude: position.coords.longitude}});
+                this.setState({position: {latitude: position.coords.latitude, longitude: position.coords.longitude}});
                 this.setState({posString: JSON.stringify(this.state.position, undefined, 2)});
+                this.setState({
+                    region: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421
+                    }
+                });
             }, (error) => alert(JSON.stringify(error))
         )
     }
 
+    incrementMarkups(fields, velibPos) {
+        this.state.markers.push({coordinate: {latitude: velibPos[0], longitude: velibPos[1]}, title: fields.name, description: fields.address});
+    }
 }
 
 
