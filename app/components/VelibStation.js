@@ -3,7 +3,7 @@
  */
 //noinspection JSUnresolvedVariable
 import React, { Component } from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {styles} from './styles';
 
 export class VelibStation extends Component {
@@ -13,7 +13,7 @@ export class VelibStation extends Component {
 
     render() {
         return (
-            <View style={StyleSheet.flatten([{height: 50, padding: 10}, styles.velib])} refreshing>
+            <View style={styles.velib} refreshing>
                 <Text style={styles.velib_title}>{this.props.title}</Text>
                 <Text style={styles.velib_distance}>{this.props.distance}m</Text>
                 {this.props.bikes && <Text style={styles.velib_bikes}>{this.props.bikes.remaining}/{this.props.bikes.total}</Text>}

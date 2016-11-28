@@ -26,20 +26,45 @@ export const styles = StyleSheet.create({
         backgroundColor: '#F5FBFE',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        width: 500
+        width: 500,
+        height: 60,
+        padding: 10
     },
 
     velib_title: {
-        width: 200
+        width: 200,
+        fontWeight: "bold"
     },
 
     velib_distance: {
-        width: 100
+        width: 100,
+        paddingLeft: 10,
     },
 
     velib_bikes: {
         width: 100,
         fontWeight: "bold"
+    },
+
+    title_image: {
+        width: 50,
+        height: 50
+    },
+
+    title_title: {
+        width: 300,
+        fontWeight: "bold",
+        paddingTop: 15,
+        paddingLeft: 10
+    },
+
+    title_view: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        width: 500,
+        height: 60,
+        padding: 10,
+        marginLeft: 140
     }
 });
 
@@ -47,13 +72,12 @@ export const styles = StyleSheet.create({
 export const mapsStyle = {
     container: {
         ...StyleSheet.absoluteFillObject,
-        height: 400,
-        width: 400,
         justifyContent: 'flex-end',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     map: {
         ...StyleSheet.absoluteFillObject,
+        height: 200,
     },
 
 };

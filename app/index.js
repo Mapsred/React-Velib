@@ -4,13 +4,14 @@
 
 //noinspection JSUnresolvedVariable
 import React, {Component} from 'react';
-import {Text, View, AsyncStorage, ListView, Image} from 'react-native';
+import {View, AsyncStorage, ListView, StyleSheet} from 'react-native';
 import {styles, mapsStyle} from './components/styles';
 import MapView from 'react-native-maps';
 import {VelibStation} from './components/VelibStation';
+import {TextTitle} from './components/TextTitle';
 
 
-const API_URL = 'http://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&facet=banking&facet=bonus&facet=status&facet=contract_name';
+const API_URL = 'http://opendata.paris.fr/api/records/1.0/search/?dataset=stations-velib-disponibilites-en-temps-reel&facet=banking&facet=bonus&facet=status&facet=contract_name&rows=20';
 
 export default class ReactVelib extends Component {
 
@@ -27,12 +28,15 @@ export default class ReactVelib extends Component {
     render() {
         return (
             <View style={mapsStyle.container} refreshing>
+                <TextTitle title="Stations favorites" image={require('../assets/images/empty_heart.png')}
+                           styles={StyleSheet.flatten([{marginTop: 200}, styles.title_view])}/>
+                <TextTitle title="Stations disponibles" image={require('../assets/images/cycle_bike.png')} styles={styles.title_view}/>
+                <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
                 <MapView style={mapsStyle.map} initialRegion={this.state.region}>
                     {this.state.markers.map(marker =>
                         (<MapView.Marker coordinate={marker.coordinate} title={marker.title} image={marker.image}
                                          description={marker.description}/>))}
                 </MapView>
-                <ListView dataSource={this.state.dataSource} renderRow={this.renderRow.bind(this)} enableEmptySections/>
             </View>
         );
     }
@@ -53,7 +57,7 @@ export default class ReactVelib extends Component {
         const distance = this.getDistanceFromLatLonInKm(pos.latitude, pos.longitude, velibPos[0], velibPos[1]);
         this.incrementMarkups(fields, velibPos);
 
-        return (<VelibStation title={name[name.length - 1]} distance={Math.round(distance)} bikes={bikes}/>);
+        return (<VelibStation title={name[name.length - 1]} distance={Math.round(distance).toString()} bikes={bikes}/>);
     }
 
     getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
