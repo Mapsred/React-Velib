@@ -51,7 +51,7 @@ export default class ReactVelib extends Component {
     renderRow(rowData) {
         const fields = rowData.fields;
         const name = (fields.name).split(" - ");
-        const bikes = {remaining: fields.available_bikes, total: fields.available_bike_stands};
+        const bikes = {remaining: fields.available_bikes, total: fields.bike_stands};
         const pos = this.state.position;
         const velibPos = fields.position;
         const distance = this.getDistanceFromLatLonInKm(pos.latitude, pos.longitude, velibPos[0], velibPos[1]);
@@ -96,7 +96,7 @@ export default class ReactVelib extends Component {
     }
 
     incrementMarkups(fields, velibPos) {
-        const description = fields.available_bikes + "/" + fields.available_bike_stands;
+        const description = fields.available_bikes + "/" + fields.bike_stands;
         this.state.markers.push({
             coordinate: {latitude: velibPos[0], longitude: velibPos[1]},
             title: fields.address,
